@@ -1,0 +1,143 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4 bg-light min-vh-100">
+  <div class="row g-4">
+
+    <!-- Left Panel: Profile Card -->
+    <aside class="col-12 col-md-4 col-lg-3">
+      <div class="bg-white rounded-3 shadow-sm p-4 h-100 d-flex flex-column position-sticky top-0" style="min-height: 50vh;">
+
+        <div class="text-center mb-4">
+          <!-- Profile photo -->
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <img
+              src="{% if user_data and user_data.image %}{{ user_data.image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+              alt="User Profile Picture"
+              class="rounded-circle border border-primary border-3 mb-2 d-block"
+              style="width: 104px; height: 104px; object-fit: cover; aspect-ratio: 1/1; background: #f5f5fa;" />
+          </div>
+          <div class="fw-bold text-primary mb-1 fs-5">{{ request.user.username }}</div>
+          <div class="text-warning mb-1 fs-4">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+          </div>
+          <div class="small text-muted">Profile 80% complete</div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="mx-auto mb-4"
+             style="width: 220px; aspect-ratio:1/1; border:5px solid #111; border-radius:16px; display:flex; align-items:center; justify-content:center; background:#fff;">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ request.scheme }}://{{ request.get_host }}{% url 'qr' %}"
+            alt="QR code for prize redemption"
+            style="width: 200px; height: 200px; object-fit:contain;" />
+        </div>
+
+        <button class="btn btn-outline-secondary btn-sm w-75" data-bs-toggle="modal" data-bs-target="#qrModal">
+          <i class="bi bi-qr-code me-1"></i> View Larger
+        </button>
+
+        <div class="small text-center mt-auto">
+          <hr class="my-3">
+          <a href="https://example.com/your-redirect-page/" class="text-decoration-none text-muted px-2" target="_blank" rel="noopener noreferrer">My Custom Page</a>
+          <span class="text-muted">|</span>
+          <a href="#" class="text-decoration-none text-muted px-2">Account Settings</a>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Central Area -->
+    <main class="col-12 col-md-8 col-lg-9 d-flex flex-column gap-4 pt-0">
+
+      <!-- Notification banner -->
+      {% if has_free_codes_remaining %}
+      <div class="alert alert-info text-center py-2 mb-3 rounded-3 shadow-sm">
+        🎉 You have <b class="text-info">{{ user_coupons_remaining }}</b> coupon codes available!
+      </div>
+      {% endif %}
+
+      <!-- Dashboard Cards -->
+      <section class="row row-cols-1 row-cols-sm-2 g-3">
+
+        <div class="col">
+          <div class="card bg-white rounded-3 shadow-sm p-3 text-center h-100 d-flex flex-column justify-content-center">
+            <div class="fs-3 fw-bold text-primary mb-0">{{ user_data.total_coupons_created }}</div>
+            <div class="small text-muted">Coupons Created</div>
+            <div class="small text-muted">{{ user_coupons_used }} Used</div>
+            <div class="small text-muted">{{ user_coupons_remaining }} Remaining</div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card bg-white rounded-3 shadow-sm p-3 text-center h-100 d-flex flex-column justify-content-center">
+            <div class="fs-3 fw-bold text-danger mb-0">
+              {% if plan_expiration_date %}
+                {{ plan_expiration_date|date:"d M Y" }}
+              {% else %}
+                N/A
+              {% endif %}
+            </div>
+            <div class="small text-muted">Plan Expiration Date</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Monthly Subscription Plan -->
+      <section class="card bg-primary text-white shadow-lg border-0 rounded-4 mx-auto mt-3"
+               style="width: 340px; aspect-ratio: 1 / 1; min-width: 220px; max-width: 380px; display: flex; align-items: center; justify-content: center;">
+        <div class="card-body text-center p-4 p-md-5 w-100">
+          <h4 class="fw-bold mb-2">Monthly Coupon Plan</h4>
+          <div class="display-5 fw-bold mb-3">₹50 <span class="fs-6 fw-normal">/month</span></div>
+          <ul class="list-group list-group-flush mx-auto text-start" style="max-width:300px;">
+            <li class="list-group-item bg-transparent text-white small p-1 border-0">1000 coupon codes per month</li>
+            <li class="list-group-item bg-transparent text-white small p-1 border-0">Ideal for growing shops</li>
+            <li class="list-group-item bg-transparent text-white small p-1 border-0">No credit card needed</li>
+            <li class="list-group-item bg-transparent text-white small p-1 border-0">Priority Customer Support</li>
+            <li class="list-group-item bg-transparent text-white small p-1 border-0">Exclusive monthly discounts</li>
+          </ul>
+          {% if package_active %}
+            <button class="btn btn-success btn-lg rounded-pill px-5 fw-semibold mt-4" disabled>Package Active</button>
+          {% else %}
+            <a href="/payment/" class="btn btn-outline-light btn-lg rounded-pill px-5 fw-semibold mt-4">Get Started</a>
+          {% endif %}
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center rounded-3 shadow-lg p-3">
+      <div class="modal-header py-1 border-0">
+        <h6 class="modal-title fw-bold" id="qrModalLabel">Scan or Download QR</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-1 pb-2">
+        <p class="text-muted small mb-2">Share this code with your customers.</p>
+        <a href="{% url 'qr' %}" id="redeem-link">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=380x380&data={{ request.scheme }}://{{ request.get_host }}{% url 'qr' %}"
+               alt="QR code to redeem your prize"
+               class="img-fluid mx-auto d-block rounded shadow-sm mb-2"
+               style="max-width:360px; width:100%; height:auto;" />
+        </a>
+        <div class="d-grid gap-2">
+          <a href="https://api.qrserver.com/v1/create-qr-code/?size=380x380&data={{ request.scheme }}://{{ request.get_host }}{% url 'qr' %}"
+             download="qrcode.png" class="btn btn-primary rounded-pill fw-bold shadow-sm">
+            <i class="bi bi-download me-1"></i> Download QR
+          </a>
+          <a href="{% url 'qr' %}" class="btn btn-success rounded-pill fw-bold shadow-sm">
+            <i class="bi bi-arrow-right-circle-fill me-1"></i> Prize Redeem Page
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

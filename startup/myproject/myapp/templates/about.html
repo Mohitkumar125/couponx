@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main>
+	<section class="hero-section text-center text-lg-start">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 mb-4">
+					<h1 class="display-4">About CouponX</h1>
+					<p class="lead">Reward customers instantly, boost your sales, and simplify prize management with
+						our all-in-one digital lucky draw platform.</p>
+				</div>
+				<div class="col-lg-6">
+					<div class="col-lg-6 col-md-8 col-sm-10 mx-auto text-center" style="max-width:100%;">
+						<img src="{% static 'img/a.jpg' %}" alt="Lucky Draw" class="img-fluid rounded shadow"
+							style="width:100%; height:auto; max-height:300px;">
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container">
+			<h2 class="section-title text-center">What is the CouponX?</h2>
+			<p class="text-center mb-5 mx-auto" style="max-width: 800px;">The CouponX is a smart,
+				fully online solution for shop owners to reward customers instantly after purchases. It removes the
+				need for physical raffle tickets and complicated manual tracking. Shop owners can easily generate
+				unique coupon codes with expiry dates, share them via QR codes or direct links, and customers can
+				instantly check and claim their prizes online.</p>
+			<div class="row g-4">
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-user-plus"></i>
+						<h5>Shop Owner Registration</h5>
+						<p>Create your account and start managing your own lucky draw campaigns instantly.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-store"></i>
+						<h5>Shop Creation</h5>
+						<p>Set up your shop profile and define the rules for your prize draws.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-qrcode"></i>
+						<h5>Coupon & QR Management</h5>
+						<p>Generate custom coupons with expiry dates and share QR codes with customers.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-gift"></i>
+						<h5>Prize Management</h5>
+						<p>Add, edit, and delete prizes with custom probability settings to engage customers.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-5 bg-light">
+		<div class="container">
+			<h2 class="section-title text-center">Our Mission & Vision</h2>
+			<div class="row">
+				<div class="col-md-6 mb-4">
+					<h5 class="text-primary">Mission</h5>
+					<p>Our mission is to empower shop owners and small businesses with a fast, reliable, and
+						user-friendly lucky draw solution that enhances customer engagement, boosts repeat sales,
+						and creates a modern digital experience.</p>
+				</div>
+				<div class="col-md-6">
+					<h5 class="text-primary">Vision</h5>
+					<p>We envision a future where every shop, regardless of size, can easily offer engaging digital
+						rewards to customers, helping local businesses grow through technology and automation.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-5 how-it-works">
+		<div class="container">
+			<h2 class="section-title text-center">How It Works</h2>
+			<div class="row text-center g-4">
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-user-plus"></i>
+						<p>Register</p>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-store"></i>
+						<p>Create Shop</p>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-qrcode"></i>
+						<p>Share QR</p>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-key"></i>
+						<p>Enter Code</p>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-gift"></i>
+						<p>See Prize</p>
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="icon-container">
+						<i class="fas fa-chart-line"></i>
+						<p>Track Results</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="py-5 bg-light">
+		<div class="container">
+			<h2 class="section-title text-center">Why Choose Us</h2>
+			<div class="row g-4">
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-bolt"></i>
+						<h5>Instant Rewards</h5>
+						<p>Customers see their prize instantly after entering their code.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-cogs"></i>
+						<h5>Easy Setup</h5>
+						<p>Get started in minutes without technical knowledge.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-lock"></i>
+						<h5>Secure & Reliable</h5>
+						<p>All prize and customer data is safely stored and managed.</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3">
+					<div class="icon-box">
+						<i class="fas fa-mobile-alt"></i>
+						<h5>Mobile Friendly</h5>
+						<p>Works perfectly on smartphones, tablets, and desktops.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+
+{% endblock %}

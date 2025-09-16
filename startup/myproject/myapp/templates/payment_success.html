@@ -1,0 +1,15 @@
+{% extends 'base1.html' %}
+{% load static %}
+{% block content %}
+<div class="container py-5 text-center">
+  <h3>Thank you for your payment request!</h3>
+  <p>Your payment request has been recorded. Please complete your payment by scanning the UPI QR code below.</p>
+  <img src="{% static 'img/qr.jpg' %}" alt="UPI QR Code" class="img-fluid mb-4" style="max-width:250px; margin:auto;">
+  <p>Once you complete the payment, click the confirm button below to notify us.</p>
+  
+  <form method="post" action="{% url 'payment' %}">
+    {% csrf_token %}
+    <a href="/dash/" class="btn btn-success">I Have Paid</a>
+  </form>
+</div>
+{% endblock %}

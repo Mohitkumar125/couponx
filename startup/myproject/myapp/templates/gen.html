@@ -1,0 +1,96 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Show only coupon generation or delete success messages -->
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'generated' in message|stringformat:"s" or 'deleted' in message|stringformat:"s" %}
+        <div class="alert alert-success text-center py-2 mb-3 rounded-3 shadow-sm">
+          {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <h2 class="section-title mb-4">Coupon Generation</h2>
+
+  <!-- Coupon Generation Form -->
+  {% if has_free_codes_remaining %}
+    <div class="card saas-card p-4 mb-4">
+      <form method="POST" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label for="shop_prefix" class="form-label">Shop Prefix</label>
+            <input type="text" id="shop_prefix" class="form-control" name="shop_prefix" placeholder="ABC" maxlength="5" required>
+          </div>
+          <div class="col-sm-6">
+            <label for="coupon_quantity" class="form-label">Coupon Quantity</label>
+            <input type="number" id="coupon_quantity" class="form-control" name="coupon_quantity" min="1" max="100" required>
+          </div>
+          <div class="col-sm-6">
+            <label for="expiry_date" class="form-label">Expiry Date</label>
+            <input type="date" id="expiry_date" class="form-control" name="expiry_date" required>
+          </div>
+          <div class="col-sm-6">
+            <label for="prize_type" class="form-label">Prize Type</label>
+            <input type="text" id="prize_type" class="form-control" name="prize_type" placeholder="Enter Prize Type" required>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary">Generate Coupons</button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="alert alert-warning text-center my-4">
+      {% if package_active %}
+        You have reached your monthly coupon creation limit. Please wait until your package renews.
+      {% else %}
+        You have reached your free coupon limit. Please purchase a package to create more coupons.
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- Generated Coupons Table -->
+  <div class="card saas-card p-4">
+    {% comment %} <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4>Generated Coupons</h4>
+      <form method="POST" action="{% url 'delete_all_coupons' %}" onsubmit="return confirm('Are you sure you want to delete all coupons? This action cannot be undone.');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete All Coupons</button>
+      </form>
+    </div> {% endcomment %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Coupon Code</th>
+          <th scope="col">Prize Type</th>
+          <th scope="col">Expiry Date</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for coupon in coupons %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ coupon.code }}</td>
+            <td>{{ coupon.prize_type }}</td>
+            <td>{{ coupon.expiry_date|date:"d M Y" }}</td>
+            <td>{{ coupon.status }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">No coupons generated yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

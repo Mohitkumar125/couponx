@@ -1,0 +1,25 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <h3 class="mb-4 text-center">Purchase Coupon Package - ₹50 / month</h3>
+
+  <form id="paymentForm" method="post" action="{% url 'payment' %}" class="mx-auto" style="max-width: 400px;" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="upiName" class="form-label">Name (as per UPI)</label>
+      <input type="text" class="form-control" id="upiName" name="upi_name" placeholder="Enter your full name" required>
+    </div>
+    <div class="mb-3">
+      <label for="upiId" class="form-label">UPI ID</label>
+      <input type="text" class="form-control" id="upiId" name="upi_id" placeholder="example@upi" pattern="[\w\.\-]+@[\w]+" required>
+      <div class="form-text">Enter your UPI ID to receive payment details.</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+      Submit
+    </button>
+  </form>
+</div>
+{% endblock %}

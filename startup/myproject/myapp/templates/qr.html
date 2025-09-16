@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Spin and Win{% endblock %}
+{% block content %}
+<div class="container-fluid bg-soft p-3" style="min-height: 100vh; background-color: #fcefe7;">
+  <div class="container">
+
+    <form id="form" method="post" autocomplete="off" aria-label="Spin and Win Entry Form" class="mb-4">
+      {% csrf_token %}
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-4">
+          <label for="id_name" class="form-label fw-semibold text-secondary">Name</label>
+          <input type="text" id="id_name" name="name" class="form-control shadow-sm" placeholder="Your Name" required aria-required="true" />
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="id_contact" class="form-label fw-semibold text-secondary">Contact Number</label>
+          <input type="tel" id="id_contact" name="contact" class="form-control shadow-sm" placeholder="1234567890" required aria-required="true" />
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="id_coupon" class="form-label fw-semibold text-secondary">Coupon Code</label>
+          <input type="text" id="id_coupon" name="coupon" class="form-control shadow-sm text-uppercase" placeholder="XYZ-123" required aria-required="true" />
+        </div>
+      </div>
+      <div class="mt-3">
+        <button id="spinBtn" type="submit" class="btn btn-gradient w-100 shadow">🎰 Spin & Win</button>
+      </div>
+    </form>
+
+    <div class="row g-3" id="prizesContainer" role="list" aria-live="polite">
+      {% for prize in prizes %}
+        <div class="col-6 col-md-4 d-flex" role="listitem">
+          <div class="prize-box flex-fill d-flex flex-column align-items-center justify-content-center shadow-sm rounded"
+            data-id="{{ prize.id }}" data-name="{{ prize.name }}" data-img="{{ prize.image.url }}"
+            tabindex="0"
+            aria-label="Prize: {{ prize.name }}">
+            <span class="prize-front text-danger fw-bold fs-1">?</span>
+            <div class="prize-back d-none text-center" aria-hidden="true">
+              <img src="{{ prize.image.url }}" alt="{{ prize.name }}" class="prize-img rounded mb-2 border border-warning shadow-sm" />
+              <div class="prize-name fw-bold fs-5 text-dark">{{ prize.name }}</div>
+              <div class="winner-name"></div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        {% for _ in "123456" %}
+          <div class="col-6 col-md-4 d-flex">
+            <div class="prize-box no-prize flex-fill d-flex align-items-center justify-content-center shadow-sm rounded text-danger fw-bold fs-3" style="min-height: 100px;">?</div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="prizeModal" class="modal fade" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow rounded-lg p-4 text-center">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" id="closeModalBtn"></button>
+        <h2 id="modalTitle" class="text-warning fw-bold"></h2>
+        <div id="modalBody" class="d-flex flex-column align-items-center gap-3 mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fcefe7;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .btn-gradient {
+    background: linear-gradient(45deg, #7b5cff, #5ad1dc);
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(123, 92, 255, 0.09);
+  }
+  .btn-gradient:hover,
+  .btn-gradient:focus {
+    opacity: 0.92;
+  }
+  .prize-box {
+    min-height: 110px;
+    background: linear-gradient(135deg, #fff 65%, #f7f3ff 100%);
+    border-radius: 18px;
+    user-select: none;
+    cursor: pointer;
+    transition: box-shadow 0.19s, transform 0.17s;
+    text-align: center;
+    width: 100%;
+  }
+  .prize-box:hover,
+  .prize-box:focus-visible {
+    box-shadow: 0 8px 22px rgba(91, 91, 223, 0.13), 0 2px 3px rgba(0, 0, 0, 0.03);
+    transform: translateY(-2px) scale(1.03);
+    outline: none;
+  }
+  .prize-box.no-prize {
+    background: #f7f6fb;
+    color: #e94e77;
+    cursor: default;
+  }
+  .prize-front {
+    font-weight: 900;
+    font-size: 2.2rem;
+    color: #d6336c;
+  }
+  .prize-back {
+    display: none;
+  }
+  .prize-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #ffd600;
+    box-shadow: 0 2px 8px rgba(255, 214, 0, 0.12);
+    margin-bottom: 0.5rem;
+  }
+  #modalBody img {
+    max-width: 150px;
+    border-radius: 12px;
+    border: 4px solid #ffc107;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+  }
+  #modalBody .prize-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+  }
+  @media (max-width: 500px) {
+    .prize-img {
+      width: 44px !important;
+      height: 44px !important;
+    }
+    .prize-front {
+      font-size: 1.5rem;
+    }
+  }
+  .prize-wheel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 13px;
+            margin-top: 30px;
+        }
+       
+        .prize-box.highlight {
+            background: linear-gradient(123deg, #2542ba 80%, #ff90be 100%);
+            border-color: #ff598e;
+            box-shadow: 0 0 30px 4px #ffe2f1b7;
+            color: #fff;
+            transform: scale(1.13) rotate(-2deg);
+        }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById("form");
+  const spinBtn = document.getElementById("spinBtn");
+  const prizeBoxes = Array.from(document.querySelectorAll(".prize-box"));
+  const prizeModalEl = document.getElementById("prizeModal");
+  const prizeModal = new bootstrap.Modal(prizeModalEl);
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
+  const closeModalBtn = document.getElementById("closeModalBtn");
+
+  let spinning = false;
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function hideAllPrizes() {
+    prizeBoxes.forEach((box) => {
+      const front = box.querySelector(".prize-front");
+      const back = box.querySelector(".prize-back");
+      if (front) front.style.display = "block";
+      if (back) back.classList.add("d-none");
+      box.classList.remove("highlight", "winning-pop");
+    });
+  }
+
+  function revealPrize(idx, customerName) {
+    prizeBoxes.forEach((box, i) => {
+      const front = box.querySelector(".prize-front");
+      const back = box.querySelector(".prize-back");
+      box.classList.remove("highlight");
+      if (i === idx) {
+        if (front) front.style.display = "none";
+        if (back) back.classList.remove("d-none");
+        const winnerSpan = back.querySelector(".winner-name");
+        if (winnerSpan) winnerSpan.textContent = `Winner: ${customerName}`;
+        box.classList.add("winning-pop");
+      } else {
+        if (front) front.style.display = "block";
+        if (back) back.classList.add("d-none");
+      }
+    });
+  }
+
+  async function spinAndReveal(name, idx) {
+    if (idx === null || idx < 0 || idx >= prizeBoxes.length) {
+      showModal("Sorry", "No prizes available.");
+      return;
+    }
+    let box = prizeBoxes[idx];
+    let prizeName = box.getAttribute("data-name") || "";
+    let prizeImg = box.getAttribute("data-img") || "";
+
+    await spinAnimation(idx);
+    revealPrize(idx, name);
+
+    modalTitle.textContent = "Congratulations!";
+    modalBody.innerHTML = `
+      <img src="${prizeImg}" alt="${prizeName}" />
+      <div class="prize-name">${prizeName}</div>
+      <div>Congratulations, ${name}! You won!</div>
+    `;
+    prizeModal.show();
+  }
+
+  async function spinAnimation(target) {
+    let total = prizeBoxes.length;
+    let currentIdx = 0;
+    let delay = 90;
+
+    prizeBoxes.forEach((box) => box.classList.remove("winning-pop"));
+
+    for (let i = 0, steps = 7 * total + target; i <= steps; i++) {
+      prizeBoxes.forEach((box, j) => box.classList.toggle("highlight", j === currentIdx));
+      await sleep(delay);
+      currentIdx = (currentIdx + 1) % total;
+      if (i > steps - total) delay += 22;
+    }
+    prizeBoxes.forEach((box) => box.classList.remove("highlight"));
+  }
+
+  function showModal(title, message) {
+    modalTitle.textContent = title;
+    modalBody.innerHTML = `<p>${message}</p>`;
+    prizeModal.show();
+  }
+
+  closeModalBtn.addEventListener("click", () => prizeModal.hide());
+
+  document.getElementById("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (spinning) return;
+    spinning = true;
+    spinBtn.disabled = true;
+
+    let name = form.name.value.trim();
+    let contact = form.contact.value.trim();
+    let coupon = form.coupon.value.trim();
+    let csrf = form.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    if (!name || !contact || !coupon) {
+      showModal("Missing Information", "Please fill in all the fields.");
+      spinBtn.disabled = false;
+      spinning = false;
+      return;
+    }
+
+    try {
+      let res = await fetch(`/validate_coupon/?coupon=${encodeURIComponent(coupon)}`);
+      let data = await res.json();
+
+      if (!data.valid) {
+        showModal("Invalid Coupon", data.message);
+        spinBtn.disabled = false;
+        spinning = false;
+        return;
+      }
+    } catch {
+      showModal("Network Error", "Unable to validate your coupon. Please try again.");
+      spinBtn.disabled = false;
+      spinning = false;
+      return;
+    }
+
+    if (prizeBoxes.length === 0) {
+      showModal("No Prizes", "No prizes are available currently.");
+      spinBtn.disabled = false;
+      spinning = false;
+      return;
+    }
+
+    let winningIdx = Math.floor(Math.random() * prizeBoxes.length);
+
+    try {
+      let resp = await fetch("/redeem_coupon/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrf,
+        },
+        body: new URLSearchParams({
+          name: name,
+          contact: contact,
+          coupon: coupon,
+          prize_id: prizeBoxes[winningIdx].getAttribute("data-id"),
+        }),
+      });
+      let redeemData = await resp.json();
+
+      if (!redeemData.success) {
+        showModal("Redemption Failed", redeemData.message);
+        spinBtn.disabled = false;
+        spinning = false;
+        return;
+      }
+    } catch {
+      showModal("Redemption Error", "Failed to redeem prize. Please try again.");
+      spinBtn.disabled = false;
+      spinning = false;
+      return;
+    }
+
+    await spinAndReveal(name, winningIdx);
+
+    spinning = false;
+    spinBtn.disabled = false;
+  });
+
+  // Initialize
+  hideAllPrizes();
+});
+</script>
+{% endblock %}
